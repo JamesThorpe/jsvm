@@ -1,0 +1,60 @@
+<html>
+<body>
+<h1 id="vm-architecture">VM Architecture</h1>
+<p> Stack based (stack grows up).  All operations are performed on the top of the stack.  Callers are responsible for cleaning up calls.</p>
+<p> Registers:</p>
+<ul>
+<li>ci: Current instruction pointer</li>
+<li>sp: Stack pointer - points at top of stack</li>
+<li>fb: Frame base - points at base of current frame</li>
+</ul>
+<p> Stack Frame:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Offset</th>
+<th style="text-align:left">What is it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>[fb+1]</code></td>
+<td style="text-align:left">Locals</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[fb]</code></td>
+<td style="text-align:left">Previous <code>fb</code> value</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[fb-1]</code></td>
+<td style="text-align:left">Return address</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[fb-2]</code></td>
+<td style="text-align:left">Space for return value</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[fb-3]</code></td>
+<td style="text-align:left">Parameter x</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[fb-.]</code></td>
+<td style="text-align:left">Parameter .</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[fb-x]</code></td>
+<td style="text-align:left">Parameter 1</td>
+</tr>
+</tbody>
+</table>
+<p> Instructions:</p>
+<ul>
+<li><code>push</code> Pushes the operand onto the stack</li>
+<li><code>pop</code>  Pops the top value off the stack, optionally into an operand</li>
+<li><code>call</code> Pushes return value space on to the stack.  Pushes <code>ci</code> onto the stack.  Pushes <code>fb</code> onto the stack.  Sets <code>fb</code> to <code>sp</code>.  Sets <code>ci</code> to operand</li>
+<li><code>ret</code>  Pops values off the top of the stack until <code>sp</code> == <code>fb</code>.  Pops top value off stack into <code>fb</code>.  Pops top value off stack into <code>ci</code>.</li>
+<li><code>add</code>  Pops two topmost values off the stack and adds together, storing result on the stack.  If one is a string, concatenates instead.</li>
+</ul>
+
+</body>
+</html>

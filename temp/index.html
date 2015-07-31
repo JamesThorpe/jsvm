@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/knockout.js"></script>
+    <script src="lib/jsvm.js"></script>
+    <script type="text/javascript">
+        var view = {
+            machine: new jsvm.machine()
+        }
+        $(function () {
+            ko.applyBindings(view);
+
+            $('#loadasm').click(function() {
+                view.machine.loadProgram($('#asmsource').val());
+            });
+
+            $('#step').click(function() {
+                view.machine.step();
+            })
+        });
+    </script>
+
+    <style type="text/css">
+        #machine {
+
+        }
+        #machine #registers, #machine #stack {
+            margin-right: 10px;
+            float: left;
+        }
+        #machine #registers table, #machine #stack table {
+            font-family: consolas;
+        }
+        #machine #stack table tr td {
+            width: 100px;
+        }
+        #machine #stack table tr td:first-child {
+            text-align: right;
+        }
+        #machine #stack table tr td:last-child {
+            width: 300px;
+        }
+        .vmbox {
+                border: 1px solid #808080;
+                border-radius: 10px;
+                padding: 10px;
+            }
+        #sourceContainer {
+            
+        }
+        #asmsource {
+            width: 200px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="machine" class="vmbox">
+    <div id="registers" class="vmbox">
+        <span>Status</span>
+        <table>
+            <tr><th>Register</th><th>Value</th></tr>
+            <tr><td>ci</td><td data-bind="text: machine.ci"></td></tr>
+            <tr><td>fb</td><td data-bind="text: machine.fb"></td></tr>
+            <tr><td>sp</td><td data-bind="text: machine.sp"></td></tr>
+        </table>
+        <button id="step">Step</button>
+    </div>
+
+    <div id="stack" class="vmbox">
+        <span>Stack</span>
+        <table>
+            <!--<tbody data-bind="foreach: machine.stack().slice(0).reverse()">
+            <tr data-bind="attr: {id: 'stackrow_' + (($root.machine.stack().length-1)-$index())}">
+                <td data-bind="html: jsvm.util.pointersForStack($root.machine, ($root.machine.stack().length-1)-$index())"></td>
+                <td data-bind="text: '<' + jsvm.util.interpretStack($data).type + '>'"></td>
+                <td data-bind="html: jsvm.util.interpretStack($data).data"></td>
+            </tr>
+            </tbody>-->
+            <tbody data-bind="foreach: machine.stack()">
+                <tr data-bind="attr: {id: 'stackrow_' + $index()}">
+                    <td data-bind="html: jsvm.util.pointersForStack($root.machine, $index())"></td>
+                    <td data-bind="text: '<' + jsvm.util.interpretStack($data).type + '>'"></td>
+                    <td data-bind="html: jsvm.util.interpretStack($data).data"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="clear: both;"></div>
+</div>
+
+<div id="sourceContainer">
+    <textarea id="asmsource">
+        push sp
+        push 3
+        add
+        pop sp
+        push 0
+        pop [fb+1]
+        push 1
+        pop [fb+2]
+        _loop
+        push [fb+1]
+        push [fb+2]
+        add
+        pop [fb+3]
+        push [fb+2]
+        pop [fb+1]
+        push [fb+3]
+        pop [fb+2]
+        push _loop
+        pop ci
+
+
+    </textarea>
+    <button id="loadasm">Load Assembler</button>
+
+</div>
+
+</body>
+</html>
